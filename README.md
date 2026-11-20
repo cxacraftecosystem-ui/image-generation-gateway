@@ -124,6 +124,7 @@ matching GitHub secret too (`gh secret set STYLES_JSON < gateway/styles.json`).
 | fal key (API-only) | Secrets Manager `indian-painting-gateway/fal-key`, made by hand, not by the stack; copy in GitHub secret `FAL_KEY` |
 | LoRA files | fal CDN, addresses in `gateway/styles.json` (not in git); copy in GitHub secret `STYLES_JSON` |
 | Logs | CloudWatch `/aws/lambda/indian-painting-gateway`, kept 30 days |
+| Local copies of the secrets | `.env` in this folder (not in git): fal key, styles, gateway URL, teacher test key |
 
 The LoRA addresses are unlisted rather than private: anyone who has one can download the file.
 They appear only in `styles.json` and the Lambda, never in replies to students.

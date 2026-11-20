@@ -7,3 +7,6 @@ student-keys.csv
 
 __pycache__/
 *.zip
+
+# Local copies of the secrets (fal key, LoRA addresses, test key).
+.env
