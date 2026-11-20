@@ -3,8 +3,8 @@
     POST /                  start an image; returns {"call_id", "status": "queued"}
     GET  /result/{call_id}  202 {"status": "processing"} until done, then the image itself
 
-Same routes and replies as the Modal app this replaces, so pages only change the base URL
-and add their x-api-key header. API Gateway checks the key before this code runs.
+Same routes and replies as the Modal app this replaces, so pages only change the base URL.
+Like that app, the API is open (no key); the daily image limit caps spending.
 """
 
 import base64
@@ -17,7 +17,7 @@ from typing import Any
 
 import boto3
 
-from gateway.daily_limits import DailyLimitReached, DailyLimits
+from gateway.daily_limit import DailyLimit, DailyLimitReached
 from gateway.fal_queue import FalError, FalQueue, JobNotFound
 from gateway.generation import FAL_MODEL, InvalidRequest, fal_arguments, parse_request
 from gateway.settings import Settings, load_settings
@@ -42,26 +42,23 @@ def handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
 
 
 def _start(event: dict[str, Any]) -> dict[str, Any]:
-    settings, queue, limits = _services()
-    key_id = (event.get("requestContext", {}).get("identity") or {}).get("apiKeyId")
-    if not key_id:
-        return _json(403, {"error": "an API key is required"})
+    settings, queue, limit = _services()
     try:
         request = parse_request(_body(event), settings.styles.keys())
     except InvalidRequest as error:
         return _json(400, {"error": str(error)})
     now = datetime.now(timezone.utc)
     try:
-        limits.take(key_id, now)
+        limit.take(now)
     except DailyLimitReached as error:
         return _json(429, {"error": str(error)})
     try:
         call_id = queue.submit(fal_arguments(request, settings.styles[request.style]))
     except FalError as error:
-        limits.give_back(key_id, now)
-        logger.error("fal refused a job for key %s: %s", key_id, error)
+        limit.give_back(now)
+        logger.error("fal refused a job: %s", error)
         return _json(502, {"error": f"the image service refused the job: {error}"})
-    logger.info("queued %s for key %s: %s %dx%d", call_id, key_id, request.style, request.width, request.height)
+    logger.info("queued %s: %s %dx%d", call_id, request.style, request.width, request.height)
     return _json(200, {"call_id": call_id, "status": "queued"})
 
 
@@ -100,16 +97,11 @@ def _body(event: dict[str, Any]) -> Any:
 # Exception to "no module-level state": Lambda reuses a warm container, so the settings,
 # the fal key from Secrets Manager and the AWS clients are built once per container.
 @cache
-def _services() -> tuple[Settings, FalQueue, DailyLimits]:
+def _services() -> tuple[Settings, FalQueue, DailyLimit]:
     settings = load_settings()
     fal_key = boto3.client("secretsmanager").get_secret_value(SecretId=settings.fal_key_secret_id)["SecretString"]
-    limits = DailyLimits(
-        boto3.client("dynamodb"),
-        settings.usage_table,
-        per_key=settings.images_per_key_per_day,
-        overall=settings.images_per_day,
-    )
-    return settings, FalQueue(FAL_MODEL, fal_key), limits
+    limit = DailyLimit(boto3.client("dynamodb"), settings.usage_table, images_per_day=settings.images_per_day)
+    return settings, FalQueue(FAL_MODEL, fal_key), limit
 
 
 def _json(status: int, payload: dict[str, Any]) -> dict[str, Any]:

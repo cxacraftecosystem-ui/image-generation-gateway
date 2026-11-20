@@ -4,10 +4,9 @@ Package the Lambda and create or update the gateway stack, then print the API UR
 
 .EXAMPLE
 ./deploy.ps1
-./deploy.ps1 -ImagesPerKeyPerDay 30 -ImagesPerDay 600
+./deploy.ps1 -ImagesPerDay 600
 #>
 param(
-    [int]$ImagesPerKeyPerDay = 50,
     [int]$ImagesPerDay = 1000
 )
 $ErrorActionPreference = 'Stop'
@@ -62,7 +61,7 @@ Invoke-Aws cloudformation deploy `
     --capabilities CAPABILITY_IAM `
     --no-fail-on-empty-changeset `
     --tags project=$StackName `
-    --parameter-overrides "CodeBucket=$bucket" "CodeKey=$codeKey" "ImagesPerKeyPerDay=$ImagesPerKeyPerDay" "ImagesPerDay=$ImagesPerDay"
+    --parameter-overrides "CodeBucket=$bucket" "CodeKey=$codeKey" "ImagesPerDay=$ImagesPerDay"
 
 # CloudFormation only deploys the API stage when the stack is first created; this
 # publishes later changes to routes and error responses too.

@@ -17,7 +17,6 @@ class Settings:
     styles: dict[str, Style]
     fal_key_secret_id: str
     usage_table: str
-    images_per_key_per_day: int
     images_per_day: int
 
 
@@ -28,7 +27,6 @@ def load_settings() -> Settings:
         styles=_styles(),
         fal_key_secret_id=env["FAL_KEY_SECRET_ID"],
         usage_table=env["USAGE_TABLE"],
-        images_per_key_per_day=int(env["IMAGES_PER_KEY_PER_DAY"]),
         images_per_day=int(env["IMAGES_PER_DAY"]),
     )
 
