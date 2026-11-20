@@ -1,0 +1,10 @@
+{
+  "kangra": {
+    "lora_url": "https://<address fal can download>/kangra_flux_lora_v1.safetensors",
+    "phrase": "Kangra miniature painting"
+  },
+  "mughal": {
+    "lora_url": "https://<address fal can download>/flux_mughal_lora_v2.safetensors",
+    "phrase": "Mughal miniature painting"
+  }
+}

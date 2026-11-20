@@ -1,0 +1,9 @@
+# The real LoRA download addresses: anyone holding one can download the weights.
+gateway/styles.json
+
+# Student names and their API keys.
+students.txt
+student-keys.csv
+
+__pycache__/
+*.zip

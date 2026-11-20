@@ -1,0 +1,280 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >-
+  Indian painting gateway - per-student API keys and daily image limits in front of
+  fal.ai's FLUX LoRA model, serving the Kangra and Mughal painting styles.
+
+Parameters:
+  CodeBucket:
+    Type: String
+    Description: Bucket holding the Lambda package (deploy.ps1 creates and fills it).
+  CodeKey:
+    Type: String
+    Description: Object key of the Lambda package.
+  FalKeySecretName:
+    Type: String
+    Default: indian-painting-gateway/fal-key
+    Description: Secrets Manager secret holding the fal.ai key (created by hand, not by this stack).
+  ImagesPerKeyPerDay:
+    Type: Number
+    Default: 50
+    MinValue: 1
+  ImagesPerDay:
+    Type: Number
+    Default: 1000
+    MinValue: 1
+  StageName:
+    Type: String
+    Default: v1
+
+Resources:
+  UsageTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: pk
+          AttributeType: S
+      KeySchema:
+        - AttributeName: pk
+          KeyType: HASH
+      TimeToLiveSpecification:
+        AttributeName: expires_at
+        Enabled: true
+
+  FunctionLogs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: /aws/lambda/indian-painting-gateway
+      RetentionInDays: 30
+
+  FunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: gateway
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:CreateLogStream
+                  - logs:PutLogEvents
+                Resource: !GetAtt FunctionLogs.Arn
+              - Effect: Allow
+                Action: secretsmanager:GetSecretValue
+                Resource: !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:${FalKeySecretName}-??????"
+              - Effect: Allow
+                Action: dynamodb:UpdateItem
+                Resource: !GetAtt UsageTable.Arn
+
+  Function:
+    Type: AWS::Lambda::Function
+    DependsOn: FunctionLogs
+    Properties:
+      FunctionName: indian-painting-gateway
+      Description: Starts FLUX LoRA jobs on fal.ai and returns their images.
+      Runtime: python3.13
+      Architectures:
+        - arm64
+      Handler: gateway.handler.handler
+      Code:
+        S3Bucket: !Ref CodeBucket
+        S3Key: !Ref CodeKey
+      Role: !GetAtt FunctionRole.Arn
+      MemorySize: 256
+      # API Gateway gives up after 29 seconds.
+      Timeout: 28
+      Environment:
+        Variables:
+          FAL_KEY_SECRET_ID: !Ref FalKeySecretName
+          USAGE_TABLE: !Ref UsageTable
+          IMAGES_PER_KEY_PER_DAY: !Ref ImagesPerKeyPerDay
+          IMAGES_PER_DAY: !Ref ImagesPerDay
+
+  Api:
+    Type: AWS::ApiGateway::RestApi
+    Properties:
+      Name: indian-painting-gateway
+      Description: Kangra and Mughal painting generation for students' pages.
+      ApiKeySourceType: HEADER
+      # Lets the result route return the image as binary to any Accept header.
+      BinaryMediaTypes:
+        - "*/*"
+      EndpointConfiguration:
+        Types:
+          - REGIONAL
+
+  ApiInvokesFunction:
+    Type: AWS::Lambda::Permission
+    Properties:
+      FunctionName: !Ref Function
+      Action: lambda:InvokeFunction
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Sub "arn:aws:execute-api:${AWS::Region}:${AWS::AccountId}:${Api}/*"
+
+  ResultResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref Api
+      ParentId: !GetAtt Api.RootResourceId
+      PathPart: result
+
+  CallIdResource:
+    Type: AWS::ApiGateway::Resource
+    Properties:
+      RestApiId: !Ref Api
+      ParentId: !Ref ResultResource
+      PathPart: "{call_id}"
+
+  StartMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref Api
+      ResourceId: !GetAtt Api.RootResourceId
+      HttpMethod: POST
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function.Arn}/invocations"
+
+  ResultMethod:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref Api
+      ResourceId: !Ref CallIdResource
+      HttpMethod: GET
+      AuthorizationType: NONE
+      ApiKeyRequired: true
+      RequestParameters:
+        method.request.path.call_id: true
+      Integration:
+        Type: AWS_PROXY
+        IntegrationHttpMethod: POST
+        Uri: !Sub "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${Function.Arn}/invocations"
+
+  StartPreflight:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref Api
+      ResourceId: !GetAtt Api.RootResourceId
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      # CloudFormation rejects YAML anchors, so ResultPreflight repeats this block; keep the two equal.
+      Integration:
+        Type: MOCK
+        # Without this, the "*/*" binary media type stops the mock template from running.
+        ContentHandling: CONVERT_TO_TEXT
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,x-api-key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Max-Age: "'7200'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Max-Age: true
+
+  ResultPreflight:
+    Type: AWS::ApiGateway::Method
+    Properties:
+      RestApiId: !Ref Api
+      ResourceId: !Ref CallIdResource
+      HttpMethod: OPTIONS
+      AuthorizationType: NONE
+      ApiKeyRequired: false
+      Integration:
+        Type: MOCK
+        ContentHandling: CONVERT_TO_TEXT
+        RequestTemplates:
+          application/json: '{"statusCode": 200}'
+        IntegrationResponses:
+          - StatusCode: "200"
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: "'*'"
+              method.response.header.Access-Control-Allow-Headers: "'Content-Type,x-api-key'"
+              method.response.header.Access-Control-Allow-Methods: "'GET,POST,OPTIONS'"
+              method.response.header.Access-Control-Max-Age: "'7200'"
+      MethodResponses:
+        - StatusCode: "200"
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+            method.response.header.Access-Control-Max-Age: true
+
+  # Errors API Gateway raises itself (a missing or wrong key, an unknown route) carry CORS headers
+  # too, so a page can read the reason instead of seeing an opaque network error.
+  ClientErrors:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref Api
+      ResponseType: DEFAULT_4XX
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,x-api-key'"
+
+  ServerErrors:
+    Type: AWS::ApiGateway::GatewayResponse
+    Properties:
+      RestApiId: !Ref Api
+      ResponseType: DEFAULT_5XX
+      ResponseParameters:
+        gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+        gatewayresponse.header.Access-Control-Allow-Headers: "'Content-Type,x-api-key'"
+
+  Deployment:
+    Type: AWS::ApiGateway::Deployment
+    DependsOn:
+      - StartMethod
+      - ResultMethod
+      - StartPreflight
+      - ResultPreflight
+      - ClientErrors
+      - ServerErrors
+    Properties:
+      RestApiId: !Ref Api
+
+  Stage:
+    Type: AWS::ApiGateway::Stage
+    Properties:
+      RestApiId: !Ref Api
+      DeploymentId: !Ref Deployment
+      StageName: !Ref StageName
+
+  # Holds the student keys. It sets no request rate or quota by choice; the only cap is the
+  # Lambda's daily image allowance.
+  StudentPlan:
+    Type: AWS::ApiGateway::UsagePlan
+    Properties:
+      UsagePlanName: indian-painting-students
+      Description: One key per student. No request rate or quota; images per day are capped by the Lambda.
+      ApiStages:
+        - ApiId: !Ref Api
+          Stage: !Ref Stage
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com/${StageName}"
+  ApiId:
+    Value: !Ref Api
+  StageName:
+    Value: !Ref StageName
+  UsagePlanId:
+    Value: !Ref StudentPlan
