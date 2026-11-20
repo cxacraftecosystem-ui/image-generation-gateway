@@ -103,7 +103,9 @@ its URL and phrase in `gateway/styles.json`, and run `./deploy.ps1`.
 
 `gateway/styles.json` is kept out of git, because anyone holding a LoRA's address can download
 the weights. A fresh clone starts by copying `styles.example.json` to `gateway/styles.json` and
-filling in the addresses; `deploy.ps1` refuses to run without it.
+filling in the addresses, which are kept in the GitHub secret `STYLES_JSON`; `deploy.ps1`
+refuses to run without the file. When you change `styles.json` or the fal key, update the
+matching GitHub secret too (`gh secret set STYLES_JSON < gateway/styles.json`).
 
 ### What it costs
 
@@ -119,8 +121,8 @@ filling in the addresses; `deploy.ps1` refuses to run without it.
 |---|---|
 | Stack (API, Lambda, usage table, usage plan) | CloudFormation `indian-painting-gateway`, ap-south-1 |
 | Lambda package | S3 `indian-painting-gateway-artifacts-<account id>` |
-| fal key (API-only) | Secrets Manager `indian-painting-gateway/fal-key`, made by hand, not by the stack |
-| LoRA files | fal CDN, addresses in `gateway/styles.json` (not in git) |
+| fal key (API-only) | Secrets Manager `indian-painting-gateway/fal-key`, made by hand, not by the stack; copy in GitHub secret `FAL_KEY` |
+| LoRA files | fal CDN, addresses in `gateway/styles.json` (not in git); copy in GitHub secret `STYLES_JSON` |
 | Logs | CloudWatch `/aws/lambda/indian-painting-gateway`, kept 30 days |
 
 The LoRA addresses are unlisted rather than private: anyone who has one can download the file.
