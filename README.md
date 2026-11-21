@@ -1,15 +1,47 @@
-# Indian painting gateway
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/hero-dark.svg">
+  <img src="docs/readme-kit/assets/hero-light.svg" width="100%" alt="Indian Painting Gateway: paint any prompt as a Kangra or Mughal miniature through one open API, with two FLUX.1-dev LoRAs on fal.ai">
+</picture>
 
-An HTTP API that paints a prompt in the **Kangra** or **Mughal** miniature style. It runs the two
-FLUX.1-dev LoRAs from [Indian-painting-generator](https://github.com/abhilashab4/Indian-painting-generator)
-on [fal.ai](https://fal.ai), behind AWS API Gateway and Lambda in ap-south-1 (Mumbai).
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=600&size=20&duration=2800&pause=900&color=C090F5&center=true&vCenter=true&width=760&lines=Paint+a+prompt+as+a+Kangra+miniature;Or+as+a+Mughal+one%2C+from+the+same+API;Two+calls%3A+start+it%2C+then+collect+it;No+key%2C+any+origin%2C+a+daily+limit">
+    <img src="https://readme-typing-svg.demolab.com?font=Plus+Jakarta+Sans&weight=600&size=20&duration=2800&pause=900&color=762CB1&center=true&vCenter=true&width=760&lines=Paint+a+prompt+as+a+Kangra+miniature;Or+as+a+Mughal+one%2C+from+the+same+API;Two+calls%3A+start+it%2C+then+collect+it;No+key%2C+any+origin%2C+a+daily+limit" alt="Paint a prompt as a Kangra miniature. Or as a Mughal one, from the same API. Two calls: start it, then collect it. No key, any origin, a daily limit.">
+  </picture>
+</p>
 
-It answers exactly like that repo's Modal app and, like it, needs no key, so a page written for
-the Modal app only changes its base URL.
+<p align="center">
+  <img src="https://img.shields.io/badge/Styles-Kangra_·_Mughal-1E1B2E?style=for-the-badge&labelColor=762CB1" alt="Styles: Kangra and Mughal">
+  <img src="https://img.shields.io/badge/Model-FLUX.1--dev_on_fal.ai-1E1B2E?style=for-the-badge&labelColor=762CB1" alt="Model: FLUX.1-dev on fal.ai">
+  <img src="https://img.shields.io/badge/AWS-API_Gateway_+_Lambda-1E1B2E?style=for-the-badge&labelColor=762CB1" alt="AWS: API Gateway and Lambda">
+  <img src="https://img.shields.io/badge/Code-Python_3.13-1E1B2E?style=for-the-badge&labelColor=762CB1" alt="Code: Python 3.13">
+  <img src="https://img.shields.io/badge/Region-ap--south--1-1E1B2E?style=for-the-badge&labelColor=762CB1" alt="Region: ap-south-1, Mumbai">
+  <a href="https://github.com/cxacraftecosystem-ui/image-generation-gateway/actions/workflows/readme-check.yml"><img src="https://github.com/cxacraftecosystem-ui/image-generation-gateway/actions/workflows/readme-check.yml/badge.svg?branch=main" alt="README check status"></a>
+</p>
 
-```
-https://n5pz0b1to2.execute-api.ap-south-1.amazonaws.com/v1
-```
+**Indian Painting Gateway** is an HTTP API that paints a prompt in the **Kangra** or **Mughal** miniature
+style. It runs the two FLUX.1-dev LoRAs from
+[Indian-painting-generator](https://github.com/abhilashab4/Indian-painting-generator) on
+[fal.ai](https://fal.ai), behind AWS API Gateway and Lambda in ap-south-1 (Mumbai). It answers exactly like
+that repository's Modal app and, like it, needs no key, so a page written for the Modal app only changes its
+base URL. A daily limit, 1,000 images by default and counted in DynamoDB, caps what it can spend.
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/stats-dark.svg">
+  <img src="docs/readme-kit/assets/stats-light.svg" width="100%" alt="At a glance: two styles, sides up to 1536 pixels, no API key, and no GPU on AWS">
+</picture>
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/divider-dark.svg">
+  <img src="docs/readme-kit/assets/divider-light.svg" width="100%" alt="">
+</picture>
+
+## <img src="docs/readme-kit/assets/icons/sparkles.svg" width="32" align="top" alt="">&nbsp; What it does
+
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/cards-dark.svg">
+  <img src="docs/readme-kit/assets/cards-light.svg" width="100%" alt="What the gateway does: two styles, two calls, an open API, a daily limit, no GPU to run and one deploy script">
+</picture>
 
 | Kangra (`"style": "kangra"`) | Mughal (`"style": "mughal"`) |
 |---|---|
@@ -18,107 +50,75 @@ https://n5pz0b1to2.execute-api.ap-south-1.amazonaws.com/v1
 | ![A princess on a palace balcony under grey monsoon clouds, with peacocks on the parapet, painted in the Kangra style](docs/images/kangra-terrace.jpg) | ![Riders on horseback chasing deer through a forest, painted in the Mughal style](docs/images/mughal-hunt.jpg) |
 | *A princess on a palace terrace watching monsoon clouds, peacocks on the parapet* | *A royal hunting party on horseback in a forest with deer* |
 
-All four were made by this API on 20 November 2026 from exactly the prompts shown, at the default
-settings. None of the prompts names a style; the API added it (see [the style phrase](#why-the-api-adds-the-style-phrase)).
+All four were made by this API on 20 November 2026 from exactly the prompts shown, at the default settings.
+None of the prompts names a style; the API added it
+([why](docs/DESIGN.md#why-the-api-adds-the-style-phrase)).
 
-**Contents:** [How it works](#how-it-works) · [Using the API](#using-the-api) ·
-[Running it](#running-it) · [Design notes](#design-notes) · [Known gaps](#known-gaps)
-
-## How it works
-
-```mermaid
-flowchart LR
-    page["Student's web page"]
-    subgraph aws["AWS, ap-south-1"]
-        api["API Gateway<br/>stage v1"]
-        fn["Lambda<br/>indian-painting-gateway"]
-        counter[("DynamoDB<br/>images started today")]
-        secret[("Secrets Manager<br/>fal key")]
-    end
-    subgraph falai["fal.ai"]
-        queue["Queue<br/>fal-ai/flux-lora on FLUX.1-dev"]
-        cdn[("fal CDN<br/>LoRA files and finished images")]
-    end
-    page -->|"POST / and GET /result/call_id"| api
-    api --> fn
-    fn -->|"counts each new image"| counter
-    fn -->|"reads once per container"| secret
-    fn -->|"submits, checks, collects"| queue
-    queue -->|"loads the style's LoRA"| cdn
-    fn -->|"downloads the finished image"| cdn
-```
-
-The Lambda does no image work itself. It validates the request, counts it against the daily
-limit, hands the job to fal's queue with the right LoRA, and later fetches the finished image and
-returns it. fal runs FLUX.1-dev on its own GPUs and bills per image.
-
-## Using the API
-
-Painting takes longer than one HTTP request should wait, so a page makes two calls: one to start
-the painting and one, repeated, to collect it.
-
-```mermaid
-sequenceDiagram
-    autonumber
-    participant P as Student's page
-    participant G as Gateway (API Gateway and Lambda)
-    participant D as DynamoDB
-    participant F as fal.ai
-    P->>G: POST / with prompt and style
-    G->>G: Check the body, add the style phrase
-    G->>D: Count one image for today
-    alt Today's limit already reached
-        G-->>P: 429 with an error
-    else Allowance left
-        G->>F: Submit the job with the style's LoRA
-        F-->>G: request id
-        G-->>P: 200 with call_id
-    end
-    loop Every few seconds until done
-        P->>G: GET /result/call_id
-        G->>F: Has the job finished?
-        alt Still painting
-            G-->>P: 202 processing
-        else Finished
-            G->>F: Fetch the result and the image
-            G-->>P: 200 with the image
-        end
-    end
-```
-
-### 1. Start a painting
-
-`POST /` with a JSON body. Only `prompt` is required.
-
-| Field | Default | Allowed |
+| Feature | Where it lives | Read more |
 |---|---|---|
-| `prompt` | (required) | up to 2,000 characters |
-| `style` | `"kangra"` | `"kangra"` or `"mughal"` |
-| `steps` | `20` | whole number, 1 to 50 |
-| `guidance` | `3.5` | 0 to 35 |
-| `width`, `height` | `768` | whole number, 256 to 1536, rounded down to a multiple of 16 |
-| `lora_scale` | `1.0` | 0 to 2; how strongly the style is applied |
+| The two calls, every field, examples and errors | `gateway/handler.py`, `gateway/generation.py` | [API](docs/API.md) |
+| The style phrase | `styled_prompt` in `gateway/generation.py` | [Design notes](docs/DESIGN.md#why-the-api-adds-the-style-phrase) |
+| The daily image limit | `gateway/daily_limit.py`, `ImagesPerDay` in `template.yaml` | [Operations](docs/OPERATIONS.md#limits) |
+| fal's queue | `gateway/fal_queue.py` | [Design notes](docs/DESIGN.md#why-fal-and-not-a-gpu-on-aws) |
+| Packaging and deployment | `deploy.ps1`, `stack.ps1`, `template.yaml` | [Operations](docs/OPERATIONS.md#deploying-a-change) |
 
-The reply is `200` with `{"call_id": "…", "status": "queued"}`.
+## <img src="docs/readme-kit/assets/icons/workflow.svg" width="32" align="top" alt="">&nbsp; How it works
 
-If the prompt doesn't contain the style's name (`kangra` or `mughal`, in any case), the API adds
-`, Kangra miniature painting` or `, Mughal miniature painting` to the end. Without it the LoRAs
-barely change the image.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/pipeline-dark.svg">
+  <img src="docs/readme-kit/assets/pipeline-light.svg" width="100%" alt="How a prompt becomes a painting: start, check, count, paint, collect">
+</picture>
 
-### 2. Collect it
+The Lambda does no image work itself. It checks the request, counts it against the daily limit, hands the
+job to fal's queue with the right LoRA, and later fetches the finished image and returns it. fal runs
+FLUX.1-dev on its own GPUs and bills per image.
 
-`GET /result/{call_id}` every few seconds:
+```mermaid
+%%{init: {"theme":"base","fontFamily":"Inter, ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif","themeVariables":{"fontSize":"15px","primaryColor":"#F2E9FE","primaryTextColor":"#1E1B2E","primaryBorderColor":"#9148D2","secondaryColor":"#FAEECD","secondaryTextColor":"#1E1B2E","secondaryBorderColor":"#CD9200","tertiaryColor":"#F3F1FA","tertiaryTextColor":"#1E1B2E","tertiaryBorderColor":"#A7A3BC","mainBkg":"#F2E9FE","nodeBorder":"#9148D2","nodeTextColor":"#1E1B2E","lineColor":"#AA69E9","textColor":"#857F9E","edgeLabelBackground":"#F9F5FF","clusterBkg":"#F9F5FF","clusterBorder":"#D6B6FB","titleColor":"#762CB1","noteBkgColor":"#FAEECD","noteTextColor":"#1E1B2E","noteBorderColor":"#CD9200","actorBkg":"#F2E9FE","actorBorder":"#9148D2","actorTextColor":"#1E1B2E","actorLineColor":"#AA69E9","signalColor":"#AA69E9","signalTextColor":"#857F9E","labelBoxBkgColor":"#F2E9FE","labelBoxBorderColor":"#9148D2","labelTextColor":"#1E1B2E","loopTextColor":"#857F9E","activationBkgColor":"#E7D5FE","activationBorderColor":"#9148D2","sequenceNumberColor":"#FFFFFF","transitionColor":"#AA69E9","transitionLabelColor":"#857F9E","stateLabelColor":"#1E1B2E","stateBkg":"#F2E9FE","compositeBackground":"#F9F5FF","compositeTitleBackground":"#F2E9FE","attributeBackgroundColorOdd":"#FFFFFF","attributeBackgroundColorEven":"#F9F5FF","relationColor":"#AA69E9","relationLabelBackground":"#F9F5FF","relationLabelColor":"#1E1B2E"}}}%%
+flowchart LR
+  page["Student's<br/>web page"]
+  subgraph aws["AWS · ap-south-1"]
+    api["API Gateway<br/>stage v1"]
+    fn["Lambda<br/>Python 3.13"]
+    counter[("DynamoDB<br/>images today")]
+    secret[("Secrets Manager<br/>fal key")]
+  end
+  subgraph falai["fal.ai"]
+    queue["Queue<br/>fal-ai/flux-lora"]
+    cdn[("fal CDN<br/>LoRAs and images")]
+  end
+  page -->|"POST /, GET /result"| api
+  api --> fn
+  fn -->|counts each new image| counter
+  fn -->|once per container| secret
+  fn -->|submit, check, collect| queue
+  queue -->|loads the LoRA| cdn
+  fn -->|downloads the image| cdn
+  classDef accent fill:#762CB1,stroke:#5F1C93,color:#FFFFFF
+  classDef gold fill:#FAEECD,stroke:#CD9200,color:#1E1B2E
+  class fn accent
+  class queue,cdn gold
+```
 
-- `202` with `{"status": "processing"}` while it is being painted;
-- `200` with the image itself once it is done: PNG, or JPEG when width × height is more than
-  1024 × 1024. The `X-Image-Url` header gives a public link to the same image on fal's CDN.
+## <img src="docs/readme-kit/assets/icons/code.svg" width="32" align="top" alt="">&nbsp; Use the API
 
-An image usually takes 10 to 15 seconds. The first one after a quiet spell takes about a minute,
-while fal loads the LoRA onto a fresh GPU.
+The API is open: no key, and calls from any origin are allowed. Its base URL:
 
-### Examples
+```text
+https://n5pz0b1to2.execute-api.ap-south-1.amazonaws.com/v1
+```
 
-JavaScript in a web page (the API allows calls from any origin):
+Painting takes longer than one HTTP request should wait, so a page makes two calls: one to start the
+painting and one, repeated every few seconds, to collect it.
+
+| Call | Send | Get back |
+|---|---|---|
+| `POST /` | JSON with `prompt` (required) and `style`, `"kangra"` (the default) or `"mughal"` | `200` with `{"call_id": "…", "status": "queued"}` |
+| `GET /result/{call_id}` | nothing | `202` with `{"status": "processing"}` while it paints, then `200` with the image itself: PNG, or JPEG above 1024 × 1024 |
+
+If the prompt doesn't name its style, the API adds `, Kangra miniature painting` or
+`, Mughal miniature painting` to the end; without it the LoRAs barely change the image. An image usually
+takes 10 to 15 seconds, and about a minute when it is the first after a quiet spell.
 
 ```js
 const API = "https://n5pz0b1to2.execute-api.ap-south-1.amazonaws.com/v1";
@@ -147,226 +147,79 @@ async function reason(response) {
 }
 ```
 
-Python with `requests`:
+The other fields (`steps`, `guidance`, `width`, `height`, `lora_scale`), Python and curl examples and every
+error are in [docs/API.md](docs/API.md).
 
-```python
-import time
-import requests
+## <img src="docs/readme-kit/assets/icons/layers.svg" width="32" align="top" alt="">&nbsp; Built with
 
-API = "https://n5pz0b1to2.execute-api.ap-south-1.amazonaws.com/v1"
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://skillicons.dev/icons?i=py,aws,powershell&theme=dark&perline=3">
+    <img src="https://skillicons.dev/icons?i=py,aws,powershell&theme=light&perline=3" alt="Python, AWS, PowerShell">
+  </picture>
+</p>
 
-start = requests.post(f"{API}/", json={"prompt": "An emperor in a garden of fountains", "style": "mughal"})
-start.raise_for_status()
-call_id = start.json()["call_id"]
-
-while True:
-    time.sleep(3)
-    result = requests.get(f"{API}/result/{call_id}")
-    if result.status_code != 202:
-        break
-result.raise_for_status()
-
-with open("painting.png", "wb") as file:
-    file.write(result.content)
-```
-
-curl:
-
-```bash
-API=https://n5pz0b1to2.execute-api.ap-south-1.amazonaws.com/v1
-curl -s "$API/" -H "Content-Type: application/json" -d '{"prompt":"A peacock on a palace wall","style":"kangra"}'
-# {"call_id": "01a1f9f9-...", "status": "queued"}
-curl -s -o painting.png -w "%{http_code}\n" "$API/result/01a1f9f9-..."   # 202 until ready, then 200
-```
-
-### Errors
-
-Errors from the gateway's own code are JSON with an `error` field; errors raised by API Gateway
-itself have a `message` field instead.
-
-| Status | Meaning |
+| Layer | Stack |
 |---|---|
-| `400` | The body is not valid JSON, a field is missing or out of range, or the `call_id` is not one this API gave out. `error` says which. |
-| `404` | fal has no job with this `call_id`, or its result has expired. Start a new painting. |
-| `429` | Today's images have been used (1,000 by default). The count resets at midnight IST. |
-| `500` | The painting failed; `error` gives fal's reason. With only a `message` field, the gateway's code crashed or ran out of time; `aws logs tail` shows why, and a retry usually works. |
-| `502` | fal refused to start the job, for example when the fal balance has run out; `error` gives the reason. The image is not counted. |
+| Model | FLUX.1-dev with the Kangra and Mughal LoRAs, run by fal.ai's `fal-ai/flux-lora` through its queue API |
+| API | API Gateway REST API, regional, stage `v1`, Lambda proxy integration, CORS preflights answered by mock integrations |
+| Code | Python 3.13 on Lambda (arm64, 256 MB, 28 s timeout); the standard library's `urllib` for fal, and `boto3` from the Lambda runtime |
+| State | DynamoDB on demand for the daily counter, Secrets Manager for the fal key, CloudWatch logs kept 30 days |
+| Deploy | CloudFormation (`template.yaml`), `deploy.ps1` and `stack.ps1` in Windows PowerShell with the AWS CLI v2, packages in S3 |
 
-fal's safety checker is on, so an image it flags may come back blank.
+## <img src="docs/readme-kit/assets/icons/rocket.svg" width="32" align="top" alt="">&nbsp; Quick start
 
-## Running it
+To deploy it from a fresh clone, in Windows PowerShell with the AWS CLI v2 signed in to the account:
 
-Everything below runs from this folder in Windows PowerShell with the AWS CLI v2 signed in to the
-account. If scripts are blocked, run them as `powershell -ExecutionPolicy Bypass -File deploy.ps1`.
+1. Store a fal.ai key that can only call models in Secrets Manager as `indian-painting-gateway/fal-key`
+   ([how](docs/SETUP.md#1-the-fal-key)).
 
-### Deploying a change
-
-```powershell
-./deploy.ps1                    # deploy with the default limit of 1,000 images a day
-./deploy.ps1 -ImagesPerDay 600  # or with another limit
-```
-
-```mermaid
-flowchart TD
-    source["gateway/*.py and gateway/styles.json"] --> zip["deploy.ps1 zips the gateway package"]
-    zip --> bucket[("S3 indian-painting-gateway-artifacts-ACCOUNT<br/>lambda/SOURCE-HASH.zip")]
-    template["template.yaml"] --> stack["CloudFormation stack indian-painting-gateway<br/>API Gateway, Lambda, DynamoDB table, log group"]
-    bucket --> stack
-    stack --> publish["deploy.ps1 publishes a fresh API deployment to stage v1"]
-    publish --> url["prints the API URL"]
-```
-
-The package is named after a hash of its source, so a deploy with unchanged code leaves the Lambda
-alone. A new deployment can take a minute to reach every API Gateway node; until then some
-requests may still see the old behaviour.
-
-### Setting it up from a fresh clone
-
-1. **fal key.** In a fal.ai account with credit, create a key that can only call models, and
-   store it in Secrets Manager:
+2. Copy the styles template and fill in each LoRA's https download address
+   ([how, and where to recover them](docs/SETUP.md#2-the-styles)). `gateway/styles.json` stays out of git.
 
    ```powershell
-   pip install fal                 # the fal CLI
-   fal auth login                  # opens a browser
-   fal keys create --preset API --desc indian-painting-gateway   # prints FAL_KEY='...'
-   aws secretsmanager create-secret --region ap-south-1 --name indian-painting-gateway/fal-key --secret-string "<the FAL_KEY value>"
+   Copy-Item styles.example.json gateway\styles.json
    ```
 
-2. **Styles.** Copy `styles.example.json` to `gateway/styles.json` and fill in each LoRA's https
-   address. The current addresses can be recovered from the deployed Lambda, whose package
-   contains `gateway/styles.json`:
+3. Deploy. The first run creates the artifacts bucket; every run prints the API URL.
 
    ```powershell
-   Invoke-WebRequest -UseBasicParsing (aws lambda get-function --function-name indian-painting-gateway --region ap-south-1 --query Code.Location --output text) -OutFile lambda.zip
-   Expand-Archive lambda.zip lambda-package
-   Copy-Item lambda-package\gateway\styles.json gateway\styles.json
-   Remove-Item -Recurse lambda.zip, lambda-package
+   ./deploy.ps1
    ```
 
-   To upload a new LoRA file to fal's CDN instead (with `FAL_KEY` set in the environment):
+Then call it as in [Use the API](#use-the-api) above. Changing the limit, reading the logs, rotating the fal key
+and taking it down are in [docs/OPERATIONS.md](docs/OPERATIONS.md).
 
-   ```powershell
-   pip install fal-client
-   python -c "import fal_client; print(fal_client.upload_file('kangra_flux_lora_v1.safetensors'))"
-   ```
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/divider-dark.svg">
+  <img src="docs/readme-kit/assets/divider-light.svg" width="100%" alt="">
+</picture>
 
-3. **Deploy:** `./deploy.ps1`. It creates the artifacts bucket on its first run.
+## <img src="docs/readme-kit/assets/icons/book-open.svg" width="32" align="top" alt="">&nbsp; Documentation
 
-### Day to day
-
-| Task | How |
+| Question | Read |
 |---|---|
-| Change the daily limit | `./deploy.ps1 -ImagesPerDay <n>` |
-| Change or add a style | Put its LoRA address and phrase in `gateway/styles.json`, then `./deploy.ps1` |
-| See images started per day | `aws dynamodb scan --region ap-south-1 --table-name (aws cloudformation describe-stack-resource --region ap-south-1 --stack-name indian-painting-gateway --logical-resource-id UsageTable --query StackResourceDetail.PhysicalResourceId --output text) --query "Items[].[pk.S,images.N]" --output text` (the last 7 days) |
-| Read the logs | `aws logs tail /aws/lambda/indian-painting-gateway --since 1h --region ap-south-1` |
-| Check the fal balance | The billing page of the fal.ai dashboard |
-| Rotate the fal key | Create a new key and store it with `aws secretsmanager put-secret-value --region ap-south-1 --secret-id indian-painting-gateway/fal-key --secret-string "<new key>"`. Running Lambda containers keep the old key, so make them start afresh with `aws lambda update-function-configuration --region ap-south-1 --function-name indian-painting-gateway --description "Starts FLUX LoRA jobs on fal.ai and returns their images. Key rotated <date>."`, then `fal keys revoke <old id>` |
+| How does a page call the API, and what does each field and error mean? | [docs/API.md](docs/API.md) |
+| How do I set it up from a fresh clone, and what is in the repository? | [docs/SETUP.md](docs/SETUP.md) |
+| How do I deploy a change, change the limit, read the logs, rotate the fal key or take it down? | [docs/OPERATIONS.md](docs/OPERATIONS.md) |
+| Where do the stack, the secrets and the logs live, and what does it cost? | [docs/OPERATIONS.md](docs/OPERATIONS.md#where-things-are) |
+| Why fal, why the style phrase, why no key, and what is still missing? | [docs/DESIGN.md](docs/DESIGN.md) |
+| Where do the LoRAs and the Modal app come from? | [abhilashab4/Indian-painting-generator](https://github.com/abhilashab4/Indian-painting-generator) |
+| How is this README built? | [docs/readme-kit/README_STYLE.md](docs/readme-kit/README_STYLE.md) |
 
-When `styles.json` or the fal key changes, also update the local `.env` and the GitHub secrets
-(`gh secret set STYLES_JSON < gateway/styles.json`, `gh secret set FAL_KEY`).
+## <img src="docs/readme-kit/assets/icons/activity.svg" width="32" align="top" alt="">&nbsp; Status
 
-### Where things are
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/timeline-dark.svg">
+  <img src="docs/readme-kit/assets/timeline-light.svg" width="100%" alt="The gateway so far: first paintings and an open API on 20 November, 1,000 Lambda calls at once and these docs on 21 November">
+</picture>
 
-| What | Where |
-|---|---|
-| API, Lambda, usage table, log group | CloudFormation stack `indian-painting-gateway`, ap-south-1 |
-| Lambda packages | S3 `indian-painting-gateway-artifacts-<account id>` |
-| fal key (API-only) | Secrets Manager `indian-painting-gateway/fal-key`, made by hand, not by the stack |
-| LoRA files | fal CDN; their addresses are in `gateway/styles.json`, which is not in git |
-| Logs | CloudWatch `/aws/lambda/indian-painting-gateway`, kept 30 days |
-| Local copies of the secrets | `.env` in this folder, not in git: fal key, styles, gateway URL |
-| Copies for GitHub Actions | Repository secrets `FAL_KEY` and `STYLES_JSON`. GitHub secrets cannot be read back, only used by a workflow, so they are not a way to recover the values. |
+The API is live at the base URL above, in the CloudFormation stack `indian-painting-gateway` in ap-south-1,
+and serves one trusted student's pages. It allows 1,000 images a day, and since AWS raised the account's quota
+on 21 November 2026 the Lambda can run 1,000 calls at once. There are no unit tests; the live API was
+checked end to end on 20 November 2026 ([known gaps](docs/DESIGN.md#known-gaps)).
 
-### Repository layout
-
-| Path | What it holds |
-|---|---|
-| `gateway/handler.py` | Lambda entry point: the two routes and their replies |
-| `gateway/generation.py` | The request contract, the style phrase, and the arguments sent to fal |
-| `gateway/fal_queue.py` | The only code that talks to fal: submit, check, collect |
-| `gateway/daily_limit.py` | The daily image counter in DynamoDB |
-| `gateway/settings.py` | Reads the Lambda environment and `styles.json` |
-| `gateway/styles.json` | Each style's LoRA address and phrase (not in git) |
-| `styles.example.json` | The shape of `styles.json` |
-| `template.yaml` | The CloudFormation stack |
-| `deploy.ps1`, `stack.ps1` | Packaging and deployment |
-| `docs/images/` | The pictures in this README |
-
-### What it costs
-
-- **fal.ai**: $0.035 per megapixel, so about $0.02 per image at 768 × 768 and $0.08 at
-  1536 × 1536. At the default limit the most a day can cost is 1,000 images: about $20 at the
-  default size, $83 if every image were the largest size.
-- **AWS**: Lambda, API Gateway, DynamoDB and S3 come to cents a month at this scale. The Secrets
-  Manager secret is $0.40 a month.
-
-### Taking it down
-
-```powershell
-$account = aws sts get-caller-identity --query Account --output text
-aws cloudformation delete-stack --stack-name indian-painting-gateway --region ap-south-1
-aws s3 rb "s3://indian-painting-gateway-artifacts-$account" --force --region ap-south-1
-aws secretsmanager delete-secret --secret-id indian-painting-gateway/fal-key --region ap-south-1
-fal keys list   # then: fal keys revoke <id>
-```
-
-## Design notes
-
-### Why fal and not a GPU on AWS
-
-On 20 November 2026 the AWS account had no GPU quota for SageMaker or EC2 in any region checked,
-and an always-on GPU endpoint big enough for FLUX.1-dev would cost $1,100 to $1,800 a month. fal
-already hosts FLUX.1-dev with LoRA support, bills per image, and needs no quota.
-
-### Why the API adds the style phrase
-
-The LoRAs were tested on fal with the same prompt, seed (7), steps (20) and size (768 × 768).
-Without a style phrase, both LoRAs leave the picture photographic:
-
-| FLUX.1-dev alone | With the Kangra LoRA | With the Mughal LoRA |
-|---|---|---|
-| ![Photograph-like woman in red on a palace balcony with peacocks](docs/images/compare/plain-base.jpg) | ![Nearly the same photograph-like scene](docs/images/compare/plain-kangra.jpg) | ![Nearly the same photograph-like scene](docs/images/compare/plain-mughal.jpg) |
-
-*"A princess on a palace terrace watching monsoon clouds, peacocks on the parapet"*
-
-With the phrase added, FLUX alone gives a semi-realistic painting, and each LoRA turns it into a
-flat miniature in its own style:
-
-| Prompt ends with | FLUX.1-dev alone | With its LoRA |
-|---|---|---|
-| ", Kangra miniature painting" | ![Semi-realistic painting of the balcony scene](docs/images/compare/phrase-kangra-base.jpg) | ![Flat Kangra miniature of the balcony scene](docs/images/compare/phrase-kangra-lora.jpg) |
-| ", Mughal miniature painting" | ![Semi-realistic painting of the balcony scene](docs/images/compare/phrase-mughal-base.jpg) | ![Mughal miniature of the balcony scene with an ornamental border](docs/images/compare/phrase-mughal-lora.jpg) |
-
-So the phrase is what switches each LoRA on, and the API adds it when a prompt leaves it out.
-
-### Why there is no key
-
-The API serves one trusted student, and the Modal app it replaces was open too (the owner's
-decision, 20 November 2026). Anyone who finds the URL can use it, so the daily image limit in
-DynamoDB is what caps spending. API Gateway quotas would count requests, every poll included,
-not images, which is why the limit lives in the Lambda. There is no request-rate limit, so a page
-can poll as often as it likes.
-
-### Smaller choices
-
-- **Image bytes, not a redirect.** `GET /result` returns the image itself, as the Modal app did,
-  so existing pages keep working. Images above one megapixel are JPEG so the base64 reply stays
-  under Lambda's 6 MB limit.
-- **fal's faster inference** (`acceleration: "regular"`) is on. At the same seed it gave
-  practically the same picture in under half the time (4 s of inference instead of 9.5 s).
-- **Sides round down to a multiple of 16**, because FLUX works in 16-pixel blocks; the Modal
-  app's pipeline did the same.
-- **The Lambda keeps its settings, fal key and AWS clients** for the life of a container, so the
-  secret is read once per container rather than once per request.
-- **Calls from any origin are allowed**, including on API Gateway's own error replies, so a page
-  always sees the real status and message.
-
-## Known gaps
-
-- **No unit tests.** The live API was checked end to end on 20 November 2026: the cross-origin
-  preflight, a bad style, a missing prompt, invalid JSON, out-of-range steps, a malformed and an
-  unknown `call_id`, and real images in both styles.
-- **The LoRA addresses are unlisted, not private.** Anyone holding one can download the weights.
-  They appear only in `gateway/styles.json`, the Lambda package, `.env` and the GitHub secrets,
-  never in replies.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="docs/readme-kit/assets/footer-dark.svg">
+  <img src="docs/readme-kit/assets/footer-light.svg" width="100%" alt="Kangra and Mughal, one prompt away. AI CoE, IIT Kharagpur, Indian miniature painting.">
+</picture>

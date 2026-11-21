@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="460" viewBox="0 0 1200 460" role="img" aria-label="What the gateway does: two styles, two calls, an open API, a daily limit, no GPU to run and one deploy script">
+<title>What the gateway does: two styles, two calls, an open API, a daily limit, no GPU to run and one deploy script</title>
+<defs>
+<style>.d{font-family:'Plus Jakarta Sans','Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}.s{font-family:'Inter',ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,Helvetica,Arial,sans-serif}.m{font-family:'JetBrains Mono',ui-monospace,'SFMono-Regular',Menlo,Consolas,'Liberation Mono',monospace}.rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.shine{animation:shine 5.6s cubic-bezier(.5,0,.3,1) infinite}@keyframes shine{0%{transform:translateX(0)}45%,100%{transform:translateX(562.7px)}}.r0{animation-delay:0.1s}.r1{animation-delay:0.2s}.r2{animation-delay:0.3s}.r3{animation-delay:0.5s}.r4{animation-delay:0.6s}.r5{animation-delay:0.7s}@media (prefers-reduced-motion:reduce){*{animation:none!important}.smil{display:none}.sweep{fill:url(#still)}}</style>
+<radialGradient id="halo"><stop offset="0" stop-color="#AA69E9" stop-opacity=".16"/><stop offset="1" stop-color="#AA69E9" stop-opacity="0"/></radialGradient>
+<linearGradient id="glint" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#C090F5" stop-opacity="0"/><stop offset=".5" stop-color="#C090F5"/><stop offset="1" stop-color="#E0AF43" stop-opacity="0"/></linearGradient>
+<clipPath id="k0"><rect x="6" y="6" width="382.7" height="214" rx="18"/></clipPath>
+<clipPath id="k1"><rect x="408.7" y="6" width="382.7" height="214" rx="18"/></clipPath>
+<clipPath id="k2"><rect x="811.3" y="6" width="382.7" height="214" rx="18"/></clipPath>
+<clipPath id="k3"><rect x="6" y="240" width="382.7" height="214" rx="18"/></clipPath>
+<clipPath id="k4"><rect x="408.7" y="240" width="382.7" height="214" rx="18"/></clipPath>
+<clipPath id="k5"><rect x="811.3" y="240" width="382.7" height="214" rx="18"/></clipPath>
+</defs>
+<g class="rise r0">
+<rect x="6" y="6" width="382.7" height="214" rx="18" fill="#1A1725" stroke="#342E47"/>
+<g clip-path="url(#k0)"><circle cx="358.7" cy="26" r="120" fill="url(#halo)"/><rect x="6" y="6" width="382.7" height="3" fill="#5F1C93"/><rect class="shine" style="animation-delay:0s" x="-174" y="6" width="180" height="3" fill="url(#glint)"/></g>
+<rect x="30" y="30" width="48" height="48" rx="14" fill="#2F0D4B" stroke="#5F1C93"/>
+<g transform="translate(42 42) scale(1)" fill="none" stroke="#D6B6FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="13.5" cy="6.5" r=".5" fill="currentColor"/><circle cx="17.5" cy="10.5" r=".5" fill="currentColor"/><circle cx="8.5" cy="7.5" r=".5" fill="currentColor"/><circle cx="6.5" cy="12.5" r=".5" fill="currentColor"/><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.926 0 1.648-.746 1.648-1.688 0-.437-.18-.835-.437-1.125-.29-.289-.438-.652-.438-1.125a1.64 1.64 0 0 1 1.668-1.668h1.996c3.051 0 5.555-2.503 5.555-5.554C21.965 6.012 17.461 2 12 2z"/></g>
+<text x="364.7" y="52" class="m" fill="#9E98B2" font-size="11" font-weight="600" letter-spacing="1.2" text-anchor="end">STYLES</text>
+<text x="30" y="116" class="d" fill="#F2F0F9" font-size="20" font-weight="700" letter-spacing="-.3">Kangra or Mughal</text>
+<text x="30" y="146" class="s" fill="#9E98B2" font-size="15">Two FLUX.1-dev LoRAs, one per style. A</text><text x="30" y="169" class="s" fill="#9E98B2" font-size="15">prompt that leaves out its style gets</text><text x="30" y="192" class="s" fill="#9E98B2" font-size="15">the style's phrase added.</text>
+</g>
+<g class="rise r1">
+<rect x="408.7" y="6" width="382.7" height="214" rx="18" fill="#1A1725" stroke="#342E47"/>
+<g clip-path="url(#k1)"><circle cx="761.3" cy="26" r="120" fill="url(#halo)"/><rect x="408.7" y="6" width="382.7" height="3" fill="#5F1C93"/><rect class="shine" style="animation-delay:0.7s" x="228.7" y="6" width="180" height="3" fill="url(#glint)"/></g>
+<rect x="432.7" y="30" width="48" height="48" rx="14" fill="#2F0D4B" stroke="#5F1C93"/>
+<g transform="translate(444.7 42) scale(1)" fill="none" stroke="#D6B6FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></g>
+<text x="767.3" y="52" class="m" fill="#9E98B2" font-size="11" font-weight="600" letter-spacing="1.2" text-anchor="end">TWO CALLS</text>
+<text x="432.7" y="116" class="d" fill="#F2F0F9" font-size="20" font-weight="700" letter-spacing="-.3">Start, then collect</text>
+<text x="432.7" y="146" class="s" fill="#9E98B2" font-size="15">POST / returns a call_id at once. GET</text><text x="432.7" y="169" class="s" fill="#9E98B2" font-size="15">/result/{call_id} answers 202 until the</text><text x="432.7" y="192" class="s" fill="#9E98B2" font-size="15">image itself comes back.</text>
+</g>
+<g class="rise r2">
+<rect x="811.3" y="6" width="382.7" height="214" rx="18" fill="#1A1725" stroke="#342E47"/>
+<g clip-path="url(#k2)"><circle cx="1164" cy="26" r="120" fill="url(#halo)"/><rect x="811.3" y="6" width="382.7" height="3" fill="#5F1C93"/><rect class="shine" style="animation-delay:1.4s" x="631.3" y="6" width="180" height="3" fill="url(#glint)"/></g>
+<rect x="835.3" y="30" width="48" height="48" rx="14" fill="#2F0D4B" stroke="#5F1C93"/>
+<g transform="translate(847.3 42) scale(1)" fill="none" stroke="#D6B6FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/><path d="M2 12h20"/></g>
+<text x="1170" y="52" class="m" fill="#9E98B2" font-size="11" font-weight="600" letter-spacing="1.2" text-anchor="end">OPEN</text>
+<text x="835.3" y="116" class="d" fill="#F2F0F9" font-size="20" font-weight="700" letter-spacing="-.3">No key, any origin</text>
+<text x="835.3" y="146" class="s" fill="#9E98B2" font-size="15">Like the Modal app it replaces, it needs</text><text x="835.3" y="169" class="s" fill="#9E98B2" font-size="15">no API key and answers pages served from</text><text x="835.3" y="192" class="s" fill="#9E98B2" font-size="15">anywhere.</text>
+</g>
+<g class="rise r3">
+<rect x="6" y="240" width="382.7" height="214" rx="18" fill="#1A1725" stroke="#342E47"/>
+<g clip-path="url(#k3)"><circle cx="358.7" cy="260" r="120" fill="url(#halo)"/><rect x="6" y="240" width="382.7" height="3" fill="#5F1C93"/><rect class="shine" style="animation-delay:2.1s" x="-174" y="240" width="180" height="3" fill="url(#glint)"/></g>
+<rect x="30" y="264" width="48" height="48" rx="14" fill="#2F0D4B" stroke="#5F1C93"/>
+<g transform="translate(42 276) scale(1)" fill="none" stroke="#D6B6FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></g>
+<text x="364.7" y="286" class="m" fill="#9E98B2" font-size="11" font-weight="600" letter-spacing="1.2" text-anchor="end">LIMIT</text>
+<text x="30" y="350" class="d" fill="#F2F0F9" font-size="20" font-weight="700" letter-spacing="-.3">A ceiling on spending</text>
+<text x="30" y="380" class="s" fill="#9E98B2" font-size="15">One DynamoDB counter allows a set number</text><text x="30" y="403" class="s" fill="#9E98B2" font-size="15">of images each IST day, then answers 429</text><text x="30" y="426" class="s" fill="#9E98B2" font-size="15">until midnight.</text>
+</g>
+<g class="rise r4">
+<rect x="408.7" y="240" width="382.7" height="214" rx="18" fill="#1A1725" stroke="#342E47"/>
+<g clip-path="url(#k4)"><circle cx="761.3" cy="260" r="120" fill="url(#halo)"/><rect x="408.7" y="240" width="382.7" height="3" fill="#5F1C93"/><rect class="shine" style="animation-delay:2.8s" x="228.7" y="240" width="180" height="3" fill="url(#glint)"/></g>
+<rect x="432.7" y="264" width="48" height="48" rx="14" fill="#2F0D4B" stroke="#5F1C93"/>
+<g transform="translate(444.7 276) scale(1)" fill="none" stroke="#D6B6FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></g>
+<text x="767.3" y="286" class="m" fill="#9E98B2" font-size="11" font-weight="600" letter-spacing="1.2" text-anchor="end">FAL.AI</text>
+<text x="432.7" y="350" class="d" fill="#F2F0F9" font-size="20" font-weight="700" letter-spacing="-.3">No GPU to run</text>
+<text x="432.7" y="380" class="s" fill="#9E98B2" font-size="15">fal runs FLUX.1-dev on its own GPUs and</text><text x="432.7" y="403" class="s" fill="#9E98B2" font-size="15">bills per image. The Lambda does no</text><text x="432.7" y="426" class="s" fill="#9E98B2" font-size="15">image work itself.</text>
+</g>
+<g class="rise r5">
+<rect x="811.3" y="240" width="382.7" height="214" rx="18" fill="#1A1725" stroke="#342E47"/>
+<g clip-path="url(#k5)"><circle cx="1164" cy="260" r="120" fill="url(#halo)"/><rect x="811.3" y="240" width="382.7" height="3" fill="#5F1C93"/><rect class="shine" style="animation-delay:3.5s" x="631.3" y="240" width="180" height="3" fill="url(#glint)"/></g>
+<rect x="835.3" y="264" width="48" height="48" rx="14" fill="#2F0D4B" stroke="#5F1C93"/>
+<g transform="translate(847.3 276) scale(1)" fill="none" stroke="#D6B6FB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/></g>
+<text x="1170" y="286" class="m" fill="#9E98B2" font-size="11" font-weight="600" letter-spacing="1.2" text-anchor="end">DEPLOY</text>
+<text x="835.3" y="350" class="d" fill="#F2F0F9" font-size="20" font-weight="700" letter-spacing="-.3">One script</text>
+<text x="835.3" y="380" class="s" fill="#9E98B2" font-size="15">deploy.ps1 zips the code, deploys the</text><text x="835.3" y="403" class="s" fill="#9E98B2" font-size="15">CloudFormation stack and publishes the</text><text x="835.3" y="426" class="s" fill="#9E98B2" font-size="15">API stage.</text>
+</g>
+</svg>

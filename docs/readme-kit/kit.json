@@ -1,0 +1,58 @@
+{
+  "hero": {
+    "eyebrow": "AI CoE · IIT Kharagpur",
+    "name": "Indian Painting Gateway",
+    "titleWrap": 18,
+    "tagline": "Paint any prompt as a Kangra or Mughal miniature: two FLUX.1-dev LoRAs on fal.ai behind one open API on AWS in Mumbai, with a daily image limit.",
+    "chips": ["FLUX.1-dev LoRAs", "fal.ai", "API Gateway + Lambda", "Python 3.13", "DynamoDB"],
+    "motifCaption": "kangra · mughal · flux",
+    "label": "Indian Painting Gateway: paint any prompt as a Kangra or Mughal miniature through one open API, with two FLUX.1-dev LoRAs on fal.ai"
+  },
+  "cards": {
+    "label": "What the gateway does: two styles, two calls, an open API, a daily limit, no GPU to run and one deploy script",
+    "columns": 3,
+    "items": [
+      { "icon": "palette", "tag": "Styles", "title": "Kangra or Mughal", "body": "Two FLUX.1-dev LoRAs, one per style. A prompt that leaves out its style gets the style's phrase added." },
+      { "icon": "send", "tag": "Two calls", "title": "Start, then collect", "body": "POST / returns a call_id at once. GET /result/{call_id} answers 202 until the image itself comes back." },
+      { "icon": "globe", "tag": "Open", "title": "No key, any origin", "body": "Like the Modal app it replaces, it needs no API key and answers pages served from anywhere." },
+      { "icon": "gauge", "tag": "Limit", "title": "A ceiling on spending", "body": "One DynamoDB counter allows a set number of images each IST day, then answers 429 until midnight." },
+      { "icon": "cloud", "tag": "fal.ai", "title": "No GPU to run", "body": "fal runs FLUX.1-dev on its own GPUs and bills per image. The Lambda does no image work itself." },
+      { "icon": "terminal", "tag": "Deploy", "title": "One script", "body": "deploy.ps1 zips the code, deploys the CloudFormation stack and publishes the API stage." }
+    ]
+  },
+  "pipeline": {
+    "label": "How a prompt becomes a painting: start, check, count, paint, collect",
+    "stages": [
+      { "icon": "send", "title": "Start", "sub": "POST / with a prompt and a style" },
+      { "icon": "shield-check", "title": "Check", "sub": "Checked, style phrase added" },
+      { "icon": "gauge", "title": "Count", "sub": "One image off today's limit" },
+      { "icon": "palette", "title": "Paint", "sub": "fal-ai/flux-lora with the LoRA" },
+      { "icon": "sparkles", "title": "Collect", "sub": "202 until ready, then the image" }
+    ]
+  },
+  "stats": {
+    "label": "At a glance: two styles, sides up to 1536 pixels, no API key, and no GPU on AWS",
+    "tiles": [
+      { "icon": "palette", "kicker": "Styles", "value": "2", "label": "Kangra and Mughal" },
+      { "icon": "layers", "kicker": "Largest side", "value": "1536", "unit": "px", "label": "Width or height, in steps of 16" },
+      { "icon": "globe", "kicker": "API keys", "value": "0", "label": "Open to any page, by choice" },
+      { "icon": "cpu", "kicker": "On AWS", "value": "0", "unit": "GPUs", "label": "fal.ai paints, billed per image" }
+    ]
+  },
+  "timeline": {
+    "label": "The gateway so far: first paintings and an open API on 20 November, 1,000 Lambda calls at once and these docs on 21 November",
+    "items": [
+      { "date": "20 Nov", "title": "First paintings", "sub": "Kangra and Mughal on fal.ai" },
+      { "date": "20 Nov", "title": "Open API", "sub": "No keys, one daily image limit" },
+      { "date": "21 Nov", "title": "1,000 at once", "sub": "Lambda concurrency raised" },
+      { "date": "21 Nov", "title": "Docs", "sub": "README kit, reference in docs/", "now": true }
+    ]
+  },
+  "divider": { "label": "Section divider" },
+  "footer": {
+    "title": "Kangra and Mughal, one prompt away.",
+    "sub": "AI CoE · IIT Kharagpur · Indian miniature painting",
+    "label": "Kangra and Mughal, one prompt away. AI CoE, IIT Kharagpur, Indian miniature painting."
+  },
+  "icons": "all"
+}
