@@ -189,7 +189,7 @@ itself have a `message` field instead.
 | `400` | The body is not valid JSON, a field is missing or out of range, or the `call_id` is not one this API gave out. `error` says which. |
 | `404` | fal has no job with this `call_id`, or its result has expired. Start a new painting. |
 | `429` | Today's images have been used (1,000 by default). The count resets at midnight IST. |
-| `500` | The painting failed; `error` gives fal's reason. With no `error` field, the gateway was too busy; retry a moment later. |
+| `500` | The painting failed; `error` gives fal's reason. With only a `message` field, the gateway's code crashed or ran out of time; `aws logs tail` shows why, and a retry usually works. |
 | `502` | fal refused to start the job, for example when the fal balance has run out; `error` gives the reason. The image is not counted. |
 
 fal's safety checker is on, so an image it flags may come back blank.
@@ -367,10 +367,6 @@ can poll as often as it likes.
 - **No unit tests.** The live API was checked end to end on 20 November 2026: the cross-origin
   preflight, a bad style, a missing prompt, invalid JSON, out-of-range steps, a malformed and an
   unknown `call_id`, and real images in both styles.
-- **Lambda concurrency.** The account could run 10 Lambda calls at once on 20 November 2026; a
-  raise to 1,000 was requested that day. Until it is granted, many requests at the same moment can
-  get `500` or `502` with no `error` field, and a retry a moment later works. Check with
-  `aws service-quotas get-service-quota --service-code lambda --quota-code L-B99A9384 --region ap-south-1`.
 - **The LoRA addresses are unlisted, not private.** Anyone holding one can download the weights.
   They appear only in `gateway/styles.json`, the Lambda package, `.env` and the GitHub secrets,
   never in replies.
